@@ -273,7 +273,7 @@ function saveWorkerUrl(){
 }
 function slotLink(charSlug, si){
   const w = getWorkerUrl();
-  if(w) return w+'/img/'+charSlug+'/'+si;
+  if(w) return w+'/img/'+currentUser.id+'/'+charSlug+'/'+si;
   return '(set your worker URL above)';
 }
 
