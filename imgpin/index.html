@@ -465,32 +465,36 @@ function toast(msg,type='ok'){ const el=$('toast'); el.textContent=msg; el.class
 // ── INIT ──
 async function init(){
   show('p-loading');
-
-  if (location.hash.includes('access_token')) {
-    history.replaceState(null, '', location.pathname);
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
+    const av=currentUser.user_metadata?.avatar_url;
+    if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
+    const w=getWorkerUrl();
+    show('p-app');
+    if(w) $('worker-url').value=w;
+    await renderListFull();
+  } else {
+    show('p-land');
   }
 
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-      if (session) {
-        currentUser = session.user;
-        $('tb-name').textContent = currentUser.user_metadata?.full_name || currentUser.email;
-        const av = currentUser.user_metadata?.avatar_url;
-        if (av) $('tb-avatar').src = av; else $('tb-avatar').style.display = 'none';
-        const w = getWorkerUrl();
-        show('p-app');
-        if (w) $('worker-url').value = w;
-        await renderListFull();
-      } else {
-        show('p-land');
-      }
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      chars = [];
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){
+      currentUser=session.user;
+      $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
+      const av=currentUser.user_metadata?.avatar_url;
+      if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
+      const w=getWorkerUrl();
+      show('p-app');
+      if(w) $('worker-url').value=w;
+      await renderListFull();
+    } else if(event==='SIGNED_OUT'){
       show('p-land');
     }
   });
 }
+
 // load slots for list thumbnails in background
 async function loadAllSlots(){
   for(const c of chars){
