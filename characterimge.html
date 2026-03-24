@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CharSlots</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090f;--s1:#111119;--s2:#1b1b26;--s3:#22222f;
+  --b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.12);--b3:rgba(255,255,255,0.22);
+  --acc:#7b68ff;--acc2:#a89dff;
+  --txt:#eeeaf8;--mut:#7a748f;--mut2:#55516a;
+  --ok:#3ecf73;--err:#ff5c69;--warn:#f5a623;
+  --r:12px;--r2:8px;
+}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;font-size:15px}
+
+/* all screens hidden by default */
+.screen{display:none}
+.screen.active{display:block}
+.fscreen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}
+.fscreen.active{display:flex}
+#s-image{background:#000;position:fixed;inset:0;display:none;align-items:center;justify-content:center}
+#s-image.active{display:flex}
+#s-image img{max-width:100%;max-height:100vh;object-fit:contain}
+
+/* SETUP */
+#s-setup{background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(123,104,255,0.14) 0%,transparent 65%)}
+.setup-box{width:100%;max-width:460px;padding:0 24px}
+.setup-brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-family:'DM Mono',monospace;margin-bottom:40px;text-align:center}
+.setup-title{font-size:26px;font-weight:800;margin-bottom:8px}
+.setup-sub{font-size:13px;color:var(--mut);margin-bottom:28px;line-height:1.7}
+.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+.step{display:flex;gap:12px;font-size:13px;color:var(--mut);line-height:1.5;align-items:flex-start}
+.step-n{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--s3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--acc2);margin-top:1px}
+.step a{color:var(--acc2);text-decoration:none}.step a:hover{text-decoration:underline}
+.sf{margin-bottom:12px}
+.sf-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-family:'DM Mono',monospace;margin-bottom:5px}
+.inp{width:100%;padding:10px 14px;background:var(--s2);border:1px solid var(--b2);border-radius:var(--r2);color:var(--txt);font-family:'DM Mono',monospace;font-size:13px;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--acc)}.inp::placeholder{color:var(--mut2)}
+.inp-syne{font-family:'Syne',sans-serif;font-size:14px}
+.setup-err{font-size:12px;color:var(--err);font-family:'DM Mono',monospace;min-height:18px;margin:6px 0}
+.setup-hint-box{margin-top:18px;padding:14px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);font-size:12px;color:var(--mut);line-height:1.6}
+
+/* PIN */
+#s-pin{background:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(123,104,255,0.16) 0%,transparent 65%)}
+.pin-brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);font-family:'DM Mono',monospace;margin-bottom:52px}
+.pin-title{font-size:28px;font-weight:800;margin-bottom:6px}
+.pin-sub{font-size:13px;color:var(--mut);margin-bottom:36px}
+.pin-dots{display:flex;gap:10px;margin-bottom:28px}
+.pd{width:13px;height:13px;border-radius:50%;border:2px solid var(--b3);transition:all .15s}
+.pd.on{background:var(--acc);border-color:var(--acc)}.pd.bad{background:var(--err);border-color:var(--err)}
+.pin-grid{display:grid;grid-template-columns:repeat(3,68px);gap:8px}
+.pb{width:68px;height:68px;border-radius:50%;background:var(--s2);border:1px solid var(--b2);color:var(--txt);font-size:19px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center}
+.pb:hover{background:var(--s3);border-color:var(--acc);color:var(--acc2)}.pb:active{transform:scale(.92)}
+.pb.pill{border-radius:34px;font-size:12px;font-weight:600}
+.pb.go{background:var(--acc);border-color:var(--acc);color:#fff}.pb.go:hover{background:var(--acc2)}
+.pin-err{margin-top:14px;font-size:12px;color:var(--err);font-family:'DM Mono',monospace;min-height:18px}
+
+/* APP */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:14px 22px;background:rgba(9,9,15,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1)}
+.topbar-brand{font-size:14px;font-weight:800;letter-spacing:.04em}
+.topbar-brand em{color:var(--acc2);font-style:normal}
+.spacer{flex:1}
+.back-btn{display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r2);border:1px solid var(--b2);background:var(--s2);color:var(--mut);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
+.back-btn:hover{color:var(--txt);border-color:var(--b3)}.back-btn.show{display:flex}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--r2);border:1px solid var(--b2);background:var(--s2);color:var(--txt);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap}
+.btn:hover{border-color:var(--b3);background:var(--s3)}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4;pointer-events:none}
+.btn-acc{background:var(--acc);border-color:var(--acc);color:#fff}.btn-acc:hover{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.btn-red{border-color:rgba(255,92,105,.2);color:var(--err)}.btn-red:hover{background:rgba(255,92,105,.1);border-color:var(--err)}
+.btn-sm{padding:6px 12px;font-size:12px}.btn-xs{padding:4px 9px;font-size:11px}.btn-ico{padding:7px;width:34px;height:34px;justify-content:center}
+.content{padding:26px 22px;max-width:1060px;margin:0 auto}
+body{padding-bottom:60px}
+.list-hd{display:flex;align-items:center;margin-bottom:18px}
+.list-title{font-size:21px;font-weight:800}
+.list-title small{font-size:13px;color:var(--mut);font-weight:400;margin-left:8px;font-family:'DM Mono',monospace}
+.add-row{display:flex;gap:10px;margin-bottom:26px}
+.chars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.empty{grid-column:1/-1;text-align:center;padding:64px 20px;color:var(--mut2)}
+.empty-ico{font-size:36px;margin-bottom:14px;opacity:.2}.empty p{font-size:14px}
+.ccard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .15s}
+.ccard:hover{border-color:var(--b2);transform:translateY(-2px)}
+.cthumb{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--bg);aspect-ratio:16/9}
+.cthumb-cell{background:var(--s2);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cthumb-cell img{width:100%;height:100%;object-fit:cover}
+.cthumb-cell span{font-size:9px;color:var(--mut2);font-family:'DM Mono',monospace}
+.cbody{padding:12px 14px}
+.cname{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmeta{font-size:11px;color:var(--mut);font-family:'DM Mono',monospace}
+.cactions{display:flex;gap:6px;padding:0 14px 12px}
+.detail-hd{margin-bottom:22px}
+.detail-name{font-size:22px;font-weight:800;margin-bottom:4px}
+.detail-hint{font-size:12px;color:var(--mut);font-family:'DM Mono',monospace}
+.slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.scard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.sprv{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.sprv img{width:100%;height:100%;object-fit:cover}
+.sprv-empty{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--mut2)}
+.sprv-empty svg{width:30px;height:30px;opacity:.35}
+.sprv-empty span{font-size:11px;font-family:'DM Mono',monospace}
+.sprv-loading{position:absolute;inset:0;background:rgba(9,9,15,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.spin{width:26px;height:26px;border:2px solid var(--b2);border-top-color:var(--acc);border-radius:50%;animation:spin .65s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sprv-loading span{font-size:11px;color:var(--mut);font-family:'DM Mono',monospace}
+.sbody{padding:14px;display:flex;flex-direction:column;gap:10px}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-family:'DM Mono',monospace}
+.lbox{background:var(--bg);border:1px solid var(--b1);border-radius:var(--r2);padding:8px 10px;display:flex;align-items:center;gap:8px}
+.lbox-url{flex:1;font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cpybtn{flex-shrink:0;padding:3px 9px;border-radius:5px;background:var(--s3);border:1px solid var(--b2);color:var(--txt);font-size:11px;font-weight:600;cursor:pointer;transition:all .12s;font-family:'Syne',sans-serif;white-space:nowrap}
+.cpybtn:hover{border-color:var(--acc);color:var(--acc2)}.cpybtn.ok{background:rgba(62,207,115,.1);border-color:var(--ok);color:var(--ok)}
+.uplabel{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;border:1px dashed var(--b2);border-radius:var(--r2);color:var(--mut);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
+.uplabel:hover{border-color:var(--acc);color:var(--acc2)}.uplabel input{display:none}
+.paste-row{display:flex;gap:8px}.paste-row .inp{font-size:12px;padding:8px 12px}
+.bbar{position:fixed;bottom:0;left:0;right:0;display:flex;align-items:center;gap:8px;padding:10px 22px;background:rgba(9,9,15,.96);backdrop-filter:blur(8px);border-top:1px solid var(--b1);font-size:12px;color:var(--mut);font-family:'DM Mono',monospace}
+.bbar-txt{flex:1}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex-shrink:0;transition:background .25s}
+.sdot.busy{background:var(--warn);animation:pulse .5s ease-in-out infinite alternate}
+.sdot.fail{background:var(--err)}
+@keyframes pulse{to{opacity:.25}}
+.no-img-wrap{color:#555;font-size:14px;font-family:'DM Mono',monospace;text-align:center;padding:24px}
+.img-spin{display:flex;flex-direction:column;align-items:center;gap:14px;color:#444;font-size:13px;font-family:'DM Mono',monospace}
+.toast{position:fixed;bottom:66px;right:18px;z-index:99;padding:10px 16px;border-radius:var(--r2);background:var(--s3);border:1px solid var(--b2);font-size:13px;font-family:'DM Mono',monospace;transform:translateY(16px);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:rgba(62,207,115,.4);color:var(--ok)}
+.toast.err{border-color:rgba(255,92,105,.4);color:var(--err)}
+.toast.warn{border-color:rgba(245,166,35,.4);color:var(--warn)}
+</style>
+</head>
+<body>
+
+<!-- PUBLIC IMAGE VIEW -->
+<div id="s-image">
+  <div class="img-spin" id="iv-spin"><div class="spin" style="width:32px;height:32px;border-width:3px"></div><span>Loading…</span></div>
+  <img id="iv-img" src="" alt="" style="display:none"/>
+  <div class="no-img-wrap" id="iv-nf" style="display:none"></div>
+</div>
+
+<!-- FIRST TIME SETUP -->
+<div id="s-setup" class="fscreen">
+  <div class="setup-box">
+    <div class="setup-brand">CharSlots · First-Time Setup</div>
+    <div class="setup-title">Connect to JSONBin</div>
+    <div class="setup-sub">Your data will live in the cloud. Anyone who visits your image links will see the same images — even after you reboot.</div>
+    <div class="steps">
+      <div class="step"><div class="step-n">1</div><span>Go to <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> → create a free account</span></div>
+      <div class="step"><div class="step-n">2</div><span>Click your avatar top-right → <strong>API Keys</strong> → copy your <strong>Master Key</strong></span></div>
+      <div class="step"><div class="step-n">3</div><span>Paste it below — the app will auto-create your storage and you're done</span></div>
+    </div>
+    <div class="sf">
+      <div class="sf-label">Master Key</div>
+      <input class="inp" id="setup-key" placeholder="$2a$10$…" type="password" onkeydown="if(event.key==='Enter')doSetup()"/>
+    </div>
+    <div class="setup-err" id="setup-err"></div>
+    <button class="btn btn-acc" id="setup-btn" onclick="doSetup()" style="width:100%;justify-content:center;margin-top:4px">Connect &amp; Create Storage →</button>
+    <div class="setup-hint-box">
+      <strong style="color:var(--txt)">Already set up on another device?</strong><br/>
+      Paste your existing <strong>Bin ID</strong> below to reuse your data.<br/>
+      <input class="inp" id="setup-bin" placeholder="Bin ID (optional — leave empty to create new)" style="margin-top:8px;font-size:12px;padding:8px 12px"/>
+    </div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div id="s-pin" class="fscreen">
+  <div class="pin-brand">CharSlots · Admin</div>
+  <div class="pin-title">Enter PIN</div>
+  <div class="pin-sub">4-digit code to access the admin panel</div>
+  <div class="pin-dots">
+    <div class="pd" id="pd0"></div><div class="pd" id="pd1"></div>
+    <div class="pd" id="pd2"></div><div class="pd" id="pd3"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pb" onclick="pp('1')">1</button><button class="pb" onclick="pp('2')">2</button><button class="pb" onclick="pp('3')">3</button>
+    <button class="pb" onclick="pp('4')">4</button><button class="pb" onclick="pp('5')">5</button><button class="pb" onclick="pp('6')">6</button>
+    <button class="pb" onclick="pp('7')">7</button><button class="pb" onclick="pp('8')">8</button><button class="pb" onclick="pp('9')">9</button>
+    <button class="pb pill" onclick="pclr()">⌫</button><button class="pb" onclick="pp('0')">0</button><button class="pb pill go" onclick="psub()">OK</button>
+  </div>
+  <div class="pin-err" id="pin-err"></div>
+</div>
+
+<!-- APP -->
+<div id="s-app" class="screen">
+  <div class="topbar">
+    <div class="topbar-brand">Char<em>Slots</em></div>
+    <button class="back-btn" id="back-btn" onclick="goList()">← Back</button>
+    <div class="spacer"></div>
+    <button class="btn btn-sm" style="color:var(--mut);font-size:11px" onclick="resetSetup()">⚙ Reset setup</button>
+  </div>
+
+  <div id="v-list" class="content">
+    <div class="list-hd"><div class="list-title">Characters <small id="char-count"></small></div></div>
+    <div class="add-row">
+      <input class="inp inp-syne" id="new-name" placeholder="New character name…" onkeydown="if(event.key==='Enter')addChar()"/>
+      <button class="btn btn-acc" onclick="addChar()">+ Add</button>
+    </div>
+    <div class="chars-grid" id="chars-grid">
+      <div class="empty"><div class="empty-ico">◈</div><p>Loading from cloud…</p></div>
+    </div>
+  </div>
+
+  <div id="v-detail" class="content" style="display:none">
+    <div class="detail-hd">
+      <div class="detail-name" id="d-name"></div>
+      <div class="detail-hint" id="d-hint"></div>
+    </div>
+    <div class="slots-grid" id="slots-grid"></div>
+  </div>
+
+  <div class="bbar">
+    <span class="sdot" id="sdot"></span>
+    <span class="bbar-txt" id="bbar-txt">Connecting…</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── CONFIG ──
+const PIN_CODE = '1650', SLOTS = 6;
+const CLOUD = 'dsgkh9gwq', PRESET = 'character-slots';
+const API = 'https://api.jsonbin.io/v3';
+const LS_KEY   = 'charslots-masterkey';
+const LS_BIN   = 'charslots-binid';
+const LS_CACHE = 'charslots-cache';
+
+// ── STATE ──
+let db = { chars: [] };
+let masterKey = '', binId = '';
+let pinVal = '', activeIdx = null;
+let saveTimer = null;
+
+const $ = id => document.getElementById(id);
+const slugify = s => s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+// show one screen
+function show(id) {
+  ['s-image','s-setup','s-pin','s-app'].forEach(s => {
+    const el=$(s), isFlex = el.classList.contains('fscreen');
+    el.classList.remove('active');
+  });
+  $(id).classList.add('active');
+}
+
+// ── JSONBIN ──
+async function apiBinCreate(key, existingId) {
+  if (existingId) return existingId;
+  const r = await fetch(`${API}/b`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-Master-Key':key,'X-Bin-Private':'false','X-Bin-Name':'charslots-data'},
+    body: JSON.stringify({chars:[]})
+  });
+  if (!r.ok) throw new Error('JSONBin error '+r.status+' — check your Master Key');
+  return (await r.json()).metadata.id;
+}
+async function apiBinRead(id, key) {
+  const headers = key ? {'X-Master-Key':key} : {};
+  const r = await fetch(`${API}/b/${id}/latest`, {headers});
+  if (!r.ok) throw new Error('Read error '+r.status);
+  return (await r.json()).record;
+}
+async function apiBinWrite(id, key, data) {
+  const r = await fetch(`${API}/b/${id}`, {
+    method:'PUT',
+    headers:{'Content-Type':'application/json','X-Master-Key':key},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('Write error '+r.status);
+}
+
+// ── CACHE (fallback when offline) ──
+function cacheSet(d){ try{localStorage.setItem(LS_CACHE,JSON.stringify(d))}catch(e){} }
+function cacheGet(){ try{const r=localStorage.getItem(LS_CACHE);return r?JSON.parse(r):null}catch(e){return null} }
+
+// ── SYNC DOT ──
+function dot(s){ const d=$('sdot'); d.className='sdot'+(s==='busy'?' busy':s==='fail'?' fail':''); }
+
+// ── SAVE (debounced 800ms) ──
+function save(){
+  dot('busy');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{ await apiBinWrite(binId,masterKey,db); cacheSet(db); dot('ok'); }
+    catch(e){ dot('fail'); toast('Cloud save failed — check your connection','err'); }
+  }, 800);
+}
+
+// ── IMAGE ROUTE (public — no PIN) ──
+async function renderImage(slug, si) {
+  $('iv-spin').style.display='flex';
+  $('iv-img').style.display='none';
+  $('iv-nf').style.display='none';
+
+  const bid = localStorage.getItem(LS_BIN);
+  if (!bid) { finish(null,'CharSlots is not set up yet.'); return; }
+
+  let data = null;
+  try {
+    data = await apiBinRead(bid, localStorage.getItem(LS_KEY)||'');
+    cacheSet(data);
+  } catch(e) {
+    data = cacheGet(); // fallback to cache if offline
+  }
+
+  if (!data) { finish(null,'Could not load data. Try again later.'); return; }
+
+  const c = data.chars.find(c=>slugify(c.name)===slug);
+  const url = c && c.slots[si];
+  if (url) {
+    const img=$('iv-img');
+    img.onerror=()=>{ img.style.display='none'; finish(null,'Image failed to load.'); };
+    img.onload=()=>{ $('iv-spin').style.display='none'; };
+    img.src=url; img.style.display='block';
+  } else {
+    finish(null, c ? 'Slot '+si+' is empty.' : 'Character "'+slug+'" not found.');
+  }
+  function finish(url, msg){
+    $('iv-spin').style.display='none';
+    if(msg){ $('iv-nf').textContent=msg; $('iv-nf').style.display='block'; }
+  }
+}
+
+// ── ROUTER ──
+async function route(){
+  const m = location.hash.match(/^#\/img\/([^/]+)\/(\d+)$/);
+  if(m){ show('s-image'); await renderImage(m[1],parseInt(m[2])); return true; }
+  return false;
+}
+window.addEventListener('hashchange', route);
+
+// ── SETUP ──
+async function doSetup(){
+  const key = $('setup-key').value.trim();
+  const existBin = $('setup-bin').value.trim();
+  if(!key){ $('setup-err').textContent='Please paste your Master Key.'; return; }
+  const btn=$('setup-btn'); btn.textContent='Connecting…'; btn.disabled=true; $('setup-err').textContent='';
+  try{
+    const id = await apiBinCreate(key, existBin||null);
+    let initial = {chars:[]};
+    if(existBin){ try{ initial=await apiBinRead(id,key); }catch(e){} }
+    localStorage.setItem(LS_KEY, key);
+    localStorage.setItem(LS_BIN, id);
+    masterKey=key; binId=id; db=initial; cacheSet(db);
+    show('s-pin');
+    toast('Connected! Bin: '+id,'ok');
+  } catch(e){
+    $('setup-err').textContent = e.message;
+    btn.textContent='Connect & Create Storage →'; btn.disabled=false;
+  }
+}
+function resetSetup(){
+  if(!confirm('Reset setup?\n\nYour JSONBin data is NOT deleted — just paste your key again to reconnect.')) return;
+  localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_BIN);
+  show('s-setup');
+}
+
+// ── PIN ──
+function pp(d){ if(pinVal.length>=4)return; pinVal+=d; dots(); if(pinVal.length===4)setTimeout(psub,120); }
+function pclr(){ pinVal=pinVal.slice(0,-1); dots(); }
+async function psub(){
+  if(pinVal===PIN_CODE){
+    show('s-app'); await loadAdmin();
+  } else {
+    dots(true); $('pin-err').textContent='Wrong PIN — try again.';
+    setTimeout(()=>{ pinVal=''; dots(); $('pin-err').textContent=''; },750);
+  }
+}
+function dots(err){ for(let i=0;i<4;i++) $('pd'+i).className='pd'+(i<pinVal.length?(err?' bad':' on'):''); }
+
+// ── ADMIN LOAD ──
+async function loadAdmin(){
+  $('bbar-txt').textContent='Loading from cloud…'; dot('busy');
+  const cached=cacheGet(); if(cached){ db=cached; renderList(); }
+  try{
+    db = await apiBinRead(binId, masterKey);
+    cacheSet(db); dot('ok'); renderList(); updateBar();
+  } catch(e){
+    dot('fail');
+    $('bbar-txt').textContent='Cloud load failed — showing cached data';
+    toast('Could not reach JSONBin','warn');
+  }
+}
+
+// ── BAR ──
+function updateBar(){
+  const total=db.chars.reduce((a,c)=>a+c.slots.filter(Boolean).length,0);
+  $('bbar-txt').textContent=db.chars.length+' character'+(db.chars.length!==1?'s':'')+' · '+total+' image'+(total!==1?'s':'')+' · auto-synced to cloud';
+  $('char-count').textContent=db.chars.length?'('+db.chars.length+')':'';
+}
+
+// ── LIST ──
+function goList(){ activeIdx=null; $('v-list').style.display=''; $('v-detail').style.display='none'; $('back-btn').classList.remove('show'); renderList(); }
+function renderList(){
+  updateBar();
+  const g=$('chars-grid');
+  if(!db.chars.length){ g.innerHTML='<div class="empty"><div class="empty-ico">◈</div><p>No characters yet — type a name above and click Add.</p></div>'; return; }
+  g.innerHTML=db.chars.map((c,ci)=>{
+    const thumbs=Array.from({length:6},(_,si)=>'<div class="cthumb-cell">'+(c.slots[si]?'<img src="'+esc(c.slots[si])+'" loading="lazy"/>':'<span>'+(si+1)+'</span>')+'</div>').join('');
+    const filled=c.slots.filter(Boolean).length;
+    return `<div class="ccard">
+      <div class="cthumb" onclick="openChar(${ci})">${thumbs}</div>
+      <div class="cbody" onclick="openChar(${ci})"><div class="cname">${esc(c.name)}</div><div class="cmeta">${filled}/${SLOTS} filled · /${slugify(c.name)}</div></div>
+      <div class="cactions"><button class="btn btn-sm btn-acc" style="flex:1" onclick="openChar(${ci})">Manage slots →</button><button class="btn btn-sm btn-red btn-ico" onclick="delChar(event,${ci})">✕</button></div>
+    </div>`;
+  }).join('');
+}
+function addChar(){
+  const inp=$('new-name'),name=inp.value.trim(); if(!name)return;
+  if(db.chars.find(c=>slugify(c.name)===slugify(name))){ toast('Name already exists','err'); return; }
+  db.chars.push({name,slots:Array(SLOTS).fill(null)});
+  inp.value=''; renderList(); save();
+}
+function delChar(e,ci){
+  e.stopPropagation();
+  if(!confirm('Delete "'+db.chars[ci].name+'" and all its slots?'))return;
+  db.chars.splice(ci,1); renderList(); save();
+}
+
+// ── DETAIL ──
+function slotLink(ci,si){ return location.href.split('#')[0]+'#/img/'+slugify(db.chars[ci].name)+'/'+si; }
+function openChar(ci){
+  activeIdx=ci; $('v-list').style.display='none'; $('v-detail').style.display=''; $('back-btn').classList.add('show');
+  $('d-name').textContent=db.chars[ci].name;
+  $('d-hint').textContent='These links are permanent — change the image URL anytime, the link stays the same';
+  renderSlots();
+}
+function renderSlots(){
+  const ci=activeIdx, c=db.chars[ci];
+  $('slots-grid').innerHTML=c.slots.map((slot,si)=>{
+    const link=slotLink(ci,si), short='#/img/'+slugify(c.name)+'/'+si;
+    const imgHtml=slot
+      ?'<img src="'+esc(slot)+'" onerror="this.style.opacity=0.2" style="width:100%;height:100%;object-fit:cover"/>'
+      :'<div class="sprv-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>empty slot</span></div>';
+    return '<div class="scard">'
+      +'<div class="sprv" id="sp'+si+'">'+imgHtml+'</div>'
+      +'<div class="sbody">'
+        +'<div class="srow"><span class="slabel">Slot '+(si+1)+'</span>'+(slot?'<button class="btn btn-xs btn-red" onclick="clearSlot('+si+')">Clear</button>':'')+'</div>'
+        +'<div class="lbox"><span class="lbox-url" title="'+esc(link)+'">'+short+'</span><button class="cpybtn" id="cp'+si+'" onclick="copyLink('+si+')">Copy</button></div>'
+        +'<label class="uplabel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>Upload image / GIF<input type="file" accept="image/*,image/gif" onchange="doUpload(event,'+si+')"/></label>'
+        +'<div class="paste-row"><input class="inp" id="pu'+si+'" placeholder="…or paste image URL" onkeydown="if(event.key===\'Enter\')setUrl('+si+')"/><button class="btn" onclick="setUrl('+si+')">Set</button></div>'
+      +'</div></div>';
+  }).join('');
+  window._links=c.slots.map((_,si)=>slotLink(ci,si));
+}
+function clearSlot(si){ db.chars[activeIdx].slots[si]=null; renderSlots(); updateBar(); save(); }
+function setUrl(si){
+  const url=$('pu'+si).value.trim(); if(!url){ toast('Paste a URL first','err'); return; }
+  db.chars[activeIdx].slots[si]=url; renderSlots(); updateBar(); save(); toast('Slot '+(si+1)+' updated!','ok');
+}
+async function doUpload(e,si){
+  const file=e.target.files[0]; if(!file)return;
+  $('sp'+si).innerHTML='<div class="sprv-loading"><div class="spin"></div><span>Uploading…</span></div>';
+  try{
+    const fd=new FormData(); fd.append('file',file); fd.append('upload_preset',PRESET);
+    const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD+'/upload',{method:'POST',body:fd});
+    const json=await res.json();
+    if(json.secure_url){ db.chars[activeIdx].slots[si]=json.secure_url; renderSlots(); updateBar(); save(); toast('Uploaded! Slot '+(si+1)+' updated','ok'); }
+    else throw new Error(json.error?.message||'Upload failed');
+  } catch(err){ renderSlots(); toast('Upload failed: '+err.message,'err'); }
+}
+function copyLink(si){
+  const url=(window._links&&window._links[si])||slotLink(activeIdx,si);
+  navigator.clipboard.writeText(url)
+    .then(()=>{ const b=$('cp'+si); b.textContent='Copied!'; b.classList.add('ok'); setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('ok'); },2000); })
+    .catch(()=>prompt('Copy this link:',url));
+}
+
+// ── TOAST ──
+let _tt;
+function toast(msg,type='ok'){ const el=$('toast'); el.textContent=msg; el.className='toast '+type+' show'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2800); }
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', async ()=>{
+  if(await route()) return; // public image view
+  masterKey = localStorage.getItem(LS_KEY)||'';
+  binId     = localStorage.getItem(LS_BIN)||'';
+  if(!masterKey||!binId){ show('s-setup'); } else { show('s-pin'); }
+});
+</script>
+</body>
+</html>
