@@ -466,13 +466,10 @@ function toast(msg,type='ok'){ const el=$('toast'); el.textContent=msg; el.class
 async function init(){
   show('p-loading');
 
-  // Clean up the OAuth hash from the URL immediately
   if (location.hash.includes('access_token')) {
     history.replaceState(null, '', location.pathname);
   }
 
-  // In Supabase v2, onAuthStateChange fires FIRST with INITIAL_SESSION
-  // so we let it drive the UI instead of relying on getSession() alone
   sb.auth.onAuthStateChange(async (event, session) => {
     if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
       if (session) {
@@ -494,37 +491,6 @@ async function init(){
     }
   });
 }
-
-  const {data:{session}} = await sb.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
-    const av=currentUser.user_metadata?.avatar_url;
-    if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
-    const w=getWorkerUrl();
-    show('p-app');
-    if(w) $('worker-url').value=w;
-    await renderListFull();
-  } else {
-    show('p-land');
-  }
-
-  sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){
-      currentUser=session.user;
-      $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
-      const av=currentUser.user_metadata?.avatar_url;
-      if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
-      const w=getWorkerUrl();
-      show('p-app');
-      if(w) $('worker-url').value=w;
-      await renderListFull();
-    } else if(event==='SIGNED_OUT'){
-      show('p-land');
-    }
-  });
-}
-
 // load slots for list thumbnails in background
 async function loadAllSlots(){
   for(const c of chars){
