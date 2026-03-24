@@ -88,7 +88,7 @@ body{padding-bottom:20px}
 .cthumb-cell img{width:100%;height:100%;object-fit:cover}
 .cthumb-cell span{font-size:8px;color:var(--mut2);font-family:var(--mono)}
 .cbody{padding:12px 14px}
-.cname{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cname{font-size:14px;font-weight:700;margin-bottom:3px;white-nowrap:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cmeta{font-size:11px;color:var(--mut);font-family:var(--mono)}
 .cactions{display:flex;gap:6px;padding:0 14px 12px}
 
@@ -194,7 +194,7 @@ body{padding-bottom:20px}
     <div class="worker-bar">
       <span class="worker-bar-label">🔗 Your Worker URL</span>
       <input class="worker-inp" id="worker-url" placeholder="https://your-worker.workers.dev" oninput="saveWorkerUrl()"/>
-      <span class="worker-hint">Paste your Cloudflare Worker URL here — your image links will use this</span>
+      <span class="worker-hint">Paste your Cloudflare Worker URL here — links use: /img/{userId}/{slug}/{slot}</span>
     </div>
 
     <div class="add-row">
@@ -210,7 +210,7 @@ body{padding-bottom:20px}
     <div class="detail-hd">
       <div class="detail-info">
         <div class="detail-name" id="d-name"></div>
-        <div class="detail-hint">Links are permanent — update the image anytime, the link stays the same</div>
+        <div class="detail-hint">Links format: {workerURL}/img/{yourUserId}/{slug}/{slotNumber}</div>
       </div>
     </div>
     <div class="slots-grid" id="slots-grid"></div>
@@ -220,11 +220,11 @@ body{padding-bottom:20px}
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://tiforjoprnxtiokirdsl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpZm9yam9wcm54dGlva2lyZHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDk3MjgsImV4cCI6MjA4OTkyNTcyOH0.PyAiQdVN_2wH9qt4aaDA4huriit_UfL7lepGZTvDLRo';
-const CLOUDINARY_CLOUD = 'dsgkh9gwq';
+const SUPABASE_URL  = 'https://tiforjoprnxtiokirdsl.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpZm9yam9wcm54dGlva2lyZHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDk3MjgsImV4cCI6MjA4OTkyNTcyOH0.PyAiQdVN_2wH9qt4aaDA4huriit_UfL7lepGZTvDLRo';
+const CLOUDINARY_CLOUD  = 'dsgkh9gwq';
 const CLOUDINARY_PRESET = 'character-slots';
-const SLOTS = 6;
+const SLOTS   = 6;
 const LS_WORKER = 'imgpin-worker-url';
 
 const { createClient } = supabase;
@@ -255,7 +255,7 @@ function show(id){
 async function signIn(){
   const {error} = await sb.auth.signInWithOAuth({
     provider:'google',
-    options:{redirectTo: location.origin+location.pathname}
+    options:{redirectTo: 'https://characterimagesrepo.vercel.app'}
   });
   if(error) toast('Login failed: '+error.message,'err');
 }
@@ -271,10 +271,13 @@ function saveWorkerUrl(){
   const val=$('worker-url').value.trim().replace(/\/$/,'');
   localStorage.setItem(LS_WORKER, val);
 }
+
+// ── KEY CHANGE: userId is now part of the link ──
 function slotLink(charSlug, si){
   const w = getWorkerUrl();
-  if(w) return w + '/img/' + currentUser.id + '/' + charSlug + '/' + si;
-  return '(set your worker URL above)';
+  if(!w) return '(set your worker URL above)';
+  if(!currentUser) return '(not logged in)';
+  return w + '/img/' + currentUser.id + '/' + charSlug + '/' + si;
 }
 
 // ── LOAD CHARS ──
@@ -296,7 +299,6 @@ async function addChar(){
   if(chars.find(c=>c.slug===slug)){ toast('Name already exists','err'); return; }
   const {data,error} = await sb.from('characters').insert({user_id:currentUser.id,name,slug}).select().single();
   if(error){ toast('Failed to add character','err'); return; }
-  // create empty slots
   const slotRows = Array.from({length:SLOTS},(_,i)=>({character_id:data.id,slot_index:i,image_url:null}));
   await sb.from('slots').insert(slotRows);
   inp.value='';
@@ -309,6 +311,7 @@ async function addChar(){
 async function delChar(e, charId, name){
   e.stopPropagation();
   if(!confirm('Delete "'+name+'" and all its slots?'))return;
+  await sb.from('slots').delete().eq('character_id',charId);
   await sb.from('characters').delete().eq('id',charId);
   chars = await loadChars();
   renderList();
@@ -316,10 +319,6 @@ async function delChar(e, charId, name){
 }
 
 // ── RENDER LIST ──
-async function renderListFull(){
-  chars = await loadChars();
-  renderList();
-}
 function renderList(){
   $('char-count').textContent = chars.length ? '('+chars.length+')' : '';
   const g=$('chars-grid');
@@ -352,7 +351,6 @@ async function openChar(charId){
   const c = chars.find(x=>x.id===charId);
   if(!c) return;
   activeChar = c;
-  // load slots fresh
   const slots = await loadSlots(charId);
   activeChar._slots = Array.from({length:SLOTS},(_,i)=>slots.find(s=>s.slot_index===i)||{slot_index:i,image_url:null});
   $('v-list').style.display='none';
@@ -406,7 +404,7 @@ function renderSlots(){
 // ── CLEAR SLOT ──
 async function clearSlot(si){
   const slot=activeChar._slots[si];
-  if(!slot) return;
+  if(!slot||!slot.id) return;
   await sb.from('slots').update({image_url:null,updated_at:new Date().toISOString()}).eq('id',slot.id);
   activeChar._slots[si].image_url=null;
   renderSlots();
@@ -431,9 +429,16 @@ async function doUpload(e,si){
     fd.append('upload_preset',CLOUDINARY_PRESET);
     const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/upload',{method:'POST',body:fd});
     const json=await res.json();
-    if(json.secure_url){ await saveSlot(si,json.secure_url); toast('Uploaded! Slot '+(si+1)+' updated','ok'); }
-    else throw new Error(json.error?.message||'Upload failed');
-  } catch(err){ renderSlots(); toast('Upload failed: '+err.message,'err'); }
+    if(json.secure_url){
+      await saveSlot(si,json.secure_url);
+      toast('Uploaded! Slot '+(si+1)+' updated','ok');
+    } else {
+      throw new Error(json.error?.message||'Upload failed');
+    }
+  } catch(err){
+    renderSlots();
+    toast('Upload failed: '+err.message,'err');
+  }
 }
 
 // ── SAVE SLOT ──
@@ -452,50 +457,29 @@ async function saveSlot(si, url){
 // ── COPY LINK ──
 function copyLink(si){
   const url=slotLink(activeChar.slug,si);
-  if(url.includes('set your worker')) { toast('Set your Worker URL first!','warn'); return; }
+  if(url.includes('set your worker')||url.includes('not logged in')){
+    toast('Set your Worker URL first!','warn'); return;
+  }
   navigator.clipboard.writeText(url)
-    .then(()=>{ const b=$('cp'+si); b.textContent='Copied!'; b.classList.add('ok'); setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('ok'); },2000); })
+    .then(()=>{
+      const b=$('cp'+si);
+      b.textContent='Copied!'; b.classList.add('ok');
+      setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('ok'); },2000);
+    })
     .catch(()=>prompt('Copy this link:',url));
 }
 
 // ── TOAST ──
 let _tt;
-function toast(msg,type='ok'){ const el=$('toast'); el.textContent=msg; el.className='toast '+type+' show'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2800); }
-
-// ── INIT ──
-async function init(){
-  show('p-loading');
-  const {data:{session}} = await sb.auth.getSession();
-  if(session){
-    currentUser=session.user;
-    $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
-    const av=currentUser.user_metadata?.avatar_url;
-    if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
-    const w=getWorkerUrl();
-    show('p-app');
-    if(w) $('worker-url').value=w;
-    await renderListFull();
-  } else {
-    show('p-land');
-  }
-
-  sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){
-      currentUser=session.user;
-      $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
-      const av=currentUser.user_metadata?.avatar_url;
-      if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
-      const w=getWorkerUrl();
-      show('p-app');
-      if(w) $('worker-url').value=w;
-      await renderListFull();
-    } else if(event==='SIGNED_OUT'){
-      show('p-land');
-    }
-  });
+function toast(msg,type='ok'){
+  const el=$('toast');
+  el.textContent=msg;
+  el.className='toast '+type+' show';
+  clearTimeout(_tt);
+  _tt=setTimeout(()=>el.classList.remove('show'),2800);
 }
 
-// load slots for list thumbnails in background
+// ── LOAD SLOTS FOR THUMBNAILS ──
 async function loadAllSlots(){
   for(const c of chars){
     if(!c._slots){
@@ -510,6 +494,36 @@ async function renderListFull(){
   chars=await loadChars();
   renderList();
   loadAllSlots();
+}
+
+// ── INIT ──
+async function init(){
+  show('p-loading');
+
+  if(location.hash.includes('access_token')){
+    history.replaceState(null,'',location.pathname);
+  }
+
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='INITIAL_SESSION'||event==='SIGNED_IN'){
+      if(session){
+        currentUser=session.user;
+        $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
+        const av=currentUser.user_metadata?.avatar_url;
+        if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
+        const w=getWorkerUrl();
+        show('p-app');
+        if(w) $('worker-url').value=w;
+        await renderListFull();
+      } else {
+        show('p-land');
+      }
+    } else if(event==='SIGNED_OUT'){
+      currentUser=null;
+      chars=[];
+      show('p-land');
+    }
+  });
 }
 
 init();
