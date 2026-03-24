@@ -11,7 +11,7 @@
 :root{
   --bg:#07080f;--s1:#0e0f1a;--s2:#161724;--s3:#1e1f2e;
   --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.1);--b3:rgba(255,255,255,0.18);
-  --acc:#ff6b6b;--acc2:#ff9a9a;--acc3:rgba(255,107,107,0.15);
+  --acc:#ff6b6b;--acc2:#ff9a9a;
   --txt:#f0eeff;--mut:#6b6880;--mut2:#3d3b52;
   --ok:#4ade80;--err:#ff6b6b;--warn:#fbbf24;
   --r:14px;--r2:8px;
@@ -20,13 +20,8 @@
 }
 body{font-family:var(--font);background:var(--bg);color:var(--txt);min-height:100vh;font-size:15px;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 50%,rgba(255,107,107,0.04) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 80% 20%,rgba(107,107,255,0.04) 0%,transparent 60%);pointer-events:none;z-index:0}
-
-.page{display:none;position:relative;z-index:1}
-.page.active{display:block}
-.fpage{display:none;min-height:100vh;align-items:center;justify-content:center;position:relative;z-index:1}
-.fpage.active{display:flex}
-
-/* ── LANDING ── */
+.page{display:none;position:relative;z-index:1}.page.active{display:block}
+.fpage{display:none;min-height:100vh;align-items:center;justify-content:center;position:relative;z-index:1}.fpage.active{display:flex}
 #p-land{flex-direction:column;text-align:center;padding:40px 24px}
 .land-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;border:1px solid rgba(255,107,107,0.3);background:rgba(255,107,107,0.08);font-size:11px;font-weight:600;font-family:var(--mono);color:var(--acc2);letter-spacing:.06em;margin-bottom:32px;text-transform:uppercase}
 .land-badge span{width:6px;height:6px;border-radius:50%;background:var(--acc);display:inline-block;animation:blink 1.4s ease-in-out infinite}
@@ -36,26 +31,20 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .land-sub{font-size:clamp(14px,2vw,17px);color:var(--mut);max-width:480px;line-height:1.7;margin:0 auto 40px}
 .land-sub strong{color:var(--txt)}
 .land-cta{display:flex;flex-direction:column;align-items:center;gap:12px}
-.btn-big{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:var(--r);background:var(--acc);border:none;color:#fff;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:-.01em}
-.btn-big:hover{background:var(--acc2);transform:translateY(-2px)}
-.btn-big:active{transform:scale(.97)}
+.btn-big{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:var(--r);background:var(--acc);border:none;color:#fff;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-big:hover{background:var(--acc2);transform:translateY(-2px)}.btn-big:active{transform:scale(.97)}
 .land-note{font-size:12px;color:var(--mut);font-family:var(--mono)}
 .land-how{display:flex;gap:16px;margin-top:56px;flex-wrap:wrap;justify-content:center;max-width:700px}
 .how-card{flex:1;min-width:180px;max-width:220px;padding:20px;background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);text-align:left}
 .how-n{font-size:11px;font-weight:600;font-family:var(--mono);color:var(--acc);margin-bottom:10px;letter-spacing:.08em}
 .how-t{font-size:13px;font-weight:700;margin-bottom:6px}
 .how-d{font-size:12px;color:var(--mut);line-height:1.6}
-
-/* ── APP SHELL ── */
 .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:14px 24px;background:rgba(7,8,15,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1)}
-.tb-logo{font-size:16px;font-weight:800;letter-spacing:-.02em}
-.tb-logo em{color:var(--acc);font-style:normal}
+.tb-logo{font-size:16px;font-weight:800;letter-spacing:-.02em}.tb-logo em{color:var(--acc);font-style:normal}
 .spacer{flex:1}
 .tb-user{display:flex;align-items:center;gap:10px}
 .tb-avatar{width:30px;height:30px;border-radius:50%;background:var(--s3);border:1px solid var(--b2);object-fit:cover}
 .tb-name{font-size:13px;color:var(--mut);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);border:1px solid var(--b2);background:var(--s2);color:var(--txt);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap}
 .btn:hover{border-color:var(--b3);background:var(--s3)}.btn:active{transform:scale(.97)}.btn:disabled{opacity:.4;pointer-events:none}
 .btn-acc{background:var(--acc);border-color:var(--acc);color:#fff}.btn-acc:hover{background:var(--acc2);border-color:var(--acc2)}
@@ -63,13 +52,8 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .btn-sm{padding:6px 12px;font-size:12px}.btn-xs{padding:4px 9px;font-size:11px}
 .btn-ico{padding:7px;width:32px;height:32px;justify-content:center}
 .btn-ghost{background:transparent;border-color:transparent;color:var(--mut)}.btn-ghost:hover{color:var(--txt);background:var(--s2);border-color:var(--b1)}
-
-/* ── CONTENT ── */
 .content{padding:28px 24px;max-width:1080px;margin:0 auto}
-body{padding-bottom:20px}
-
-/* ── DASHBOARD ── */
-.dash-hd{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.dash-hd{display:flex;align-items:center;gap:12px;margin-bottom:24px}
 .dash-title{font-size:22px;font-weight:800;letter-spacing:-.02em}
 .dash-title small{font-size:13px;color:var(--mut);font-weight:400;margin-left:6px;font-family:var(--mono)}
 .add-row{display:flex;gap:10px;margin-bottom:28px}
@@ -79,9 +63,7 @@ body{padding-bottom:20px}
 .empty-state{grid-column:1/-1;text-align:center;padding:72px 20px;color:var(--mut2)}
 .empty-ico{font-size:42px;margin-bottom:16px;opacity:.15}
 .empty-state p{font-size:14px;line-height:1.7}
-
-/* ── CHAR CARD ── */
-.ccard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .18s;position:relative}
+.ccard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .18s}
 .ccard:hover{border-color:var(--b2);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.4)}
 .cthumb{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--bg);aspect-ratio:16/9}
 .cthumb-cell{background:var(--s2);overflow:hidden;display:flex;align-items:center;justify-content:center}
@@ -91,21 +73,15 @@ body{padding-bottom:20px}
 .cname{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cmeta{font-size:11px;color:var(--mut);font-family:var(--mono)}
 .cactions{display:flex;gap:6px;padding:0 14px 12px}
-
-/* ── DETAIL ── */
-.detail-hd{margin-bottom:24px;display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
-.detail-info{flex:1}
+.detail-hd{margin-bottom:24px}
 .detail-name{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
 .detail-hint{font-size:12px;color:var(--mut);font-family:var(--mono);line-height:1.6}
 .slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
-
-/* ── SLOT CARD ── */
 .scard{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;transition:border-color .15s}
 .scard:hover{border-color:var(--b2)}
-.sprv{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer}
-.sprv img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
-.sprv:hover img{transform:scale(1.03)}
-.sprv-empty{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--mut2);pointer-events:none}
+.sprv{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.sprv img{width:100%;height:100%;object-fit:cover;transition:transform .2s}.sprv:hover img{transform:scale(1.03)}
+.sprv-empty{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--mut2)}
 .sprv-empty svg{width:28px;height:28px;opacity:.3}
 .sprv-empty span{font-size:11px;font-family:var(--mono)}
 .sprv-loading{position:absolute;inset:0;background:rgba(7,8,15,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
@@ -122,38 +98,23 @@ body{padding-bottom:20px}
 .uplabel{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px;border:1px dashed var(--b2);border-radius:var(--r2);color:var(--mut);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
 .uplabel:hover{border-color:var(--acc);color:var(--acc2)}.uplabel input{display:none}
 .paste-row{display:flex;gap:8px}.paste-row .inp{font-size:12px;padding:8px 12px}
-
-/* ── BACK BTN ── */
 .back-btn{display:none;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r2);border:1px solid var(--b2);background:var(--s2);color:var(--mut);font-size:13px;font-weight:600;cursor:pointer;transition:all .12s}
 .back-btn:hover{color:var(--txt);border-color:var(--b3)}.back-btn.show{display:flex}
-
-/* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:20px;z-index:99;padding:10px 16px;border-radius:var(--r2);background:var(--s3);border:1px solid var(--b2);font-size:13px;font-family:var(--mono);transform:translateY(16px);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:300px}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{border-color:rgba(74,222,128,.4);color:var(--ok)}
 .toast.err{border-color:rgba(255,107,107,.4);color:var(--err)}
 .toast.warn{border-color:rgba(251,191,36,.4);color:var(--warn)}
-
-/* ── LOADING SCREEN ── */
 #p-loading{flex-direction:column;align-items:center;gap:14px;color:var(--mut);font-family:var(--mono);font-size:13px}
-
-/* ── WORKER URL BAR ── */
-.worker-bar{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.worker-bar-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);font-family:var(--mono);flex-shrink:0}
-.worker-inp{flex:1;min-width:200px;padding:8px 12px;background:var(--bg);border:1px solid var(--b2);border-radius:var(--r2);color:var(--txt);font-family:var(--mono);font-size:12px;outline:none;transition:border-color .15s}
-.worker-inp:focus{border-color:var(--acc)}
-.worker-hint{font-size:11px;color:var(--mut);font-family:var(--mono);width:100%}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="p-loading" class="fpage active">
   <div class="spin" style="width:30px;height:30px;border-width:3px"></div>
   <span>Loading Imgpin…</span>
 </div>
 
-<!-- LANDING -->
 <div id="p-land" class="fpage">
   <div class="land-badge"><span></span>Free · No credit card needed</div>
   <h1 class="land-title">Permanent image links<br>for your <span class="hi">AI characters</span></h1>
@@ -172,7 +133,6 @@ body{padding-bottom:20px}
   </div>
 </div>
 
-<!-- APP -->
 <div id="p-app" class="page">
   <div class="topbar">
     <div class="tb-logo">Img<em>pin</em></div>
@@ -184,19 +144,10 @@ body{padding-bottom:20px}
       <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
     </div>
   </div>
-
   <div id="v-list" class="content">
     <div class="dash-hd">
       <div class="dash-title">My Characters <small id="char-count"></small></div>
     </div>
-
-    <!-- Worker URL config -->
-    <div class="worker-bar">
-      <span class="worker-bar-label">🔗 Your Worker URL</span>
-      <input class="worker-inp" id="worker-url" placeholder="https://your-worker.workers.dev" oninput="saveWorkerUrl()"/>
-      <span class="worker-hint">Paste your Cloudflare Worker URL here — your image links will use this</span>
-    </div>
-
     <div class="add-row">
       <input class="inp" id="new-name" placeholder="New character name…" onkeydown="if(event.key==='Enter')addChar()"/>
       <button class="btn btn-acc" onclick="addChar()">+ Add</button>
@@ -205,13 +156,10 @@ body{padding-bottom:20px}
       <div class="empty-state"><div class="empty-ico">◈</div><p>Loading your characters…</p></div>
     </div>
   </div>
-
   <div id="v-detail" class="content" style="display:none">
     <div class="detail-hd">
-      <div class="detail-info">
-        <div class="detail-name" id="d-name"></div>
-        <div class="detail-hint">Links are permanent — update the image anytime, the link stays the same</div>
-      </div>
+      <div class="detail-name" id="d-name"></div>
+      <div class="detail-hint">Links are permanent — update the image anytime, the link stays the same</div>
     </div>
     <div class="slots-grid" id="slots-grid"></div>
   </div>
@@ -220,19 +168,17 @@ body{padding-bottom:20px}
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://tiforjoprnxtiokirdsl.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpZm9yam9wcm54dGlva2lyZHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDk3MjgsImV4cCI6MjA4OTkyNTcyOH0.PyAiQdVN_2wH9qt4aaDA4huriit_UfL7lepGZTvDLRo';
-const CLOUDINARY_CLOUD = 'dsgkh9gwq';
+const SUPABASE_URL      = 'https://tiforjoprnxtiokirdsl.supabase.co';
+const SUPABASE_KEY      = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpZm9yam9wcm54dGlva2lyZHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDk3MjgsImV4cCI6MjA4OTkyNTcyOH0.PyAiQdVN_2wH9qt4aaDA4huriit_UfL7lepGZTvDLRo';
+const WORKER_URL        = 'https://quiet-moon-051c.darlajanni.workers.dev';
+const CLOUDINARY_CLOUD  = 'dsgkh9gwq';
 const CLOUDINARY_PRESET = 'character-slots';
 const SLOTS = 6;
-const LS_WORKER = 'imgpin-worker-url';
 
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let currentUser = null;
-let chars = [];
-let activeChar = null;
+let currentUser = null, chars = [], activeChar = null;
 
 const $ = id => document.getElementById(id);
 const slugify = s => s.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
@@ -240,93 +186,53 @@ const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>
 
 function show(id){
   ['p-loading','p-land','p-app'].forEach(p=>{
-    const el=$(p);
-    el.classList.remove('active');
-    if(el.classList.contains('fpage')) el.style.display='';
-    else el.style.display='none';
+    const el=$(p); el.classList.remove('active');
+    el.style.display = el.classList.contains('fpage') ? '' : 'none';
   });
-  const target=$(id);
-  target.classList.add('active');
-  if(target.classList.contains('fpage')) target.style.display='flex';
-  else target.style.display='block';
+  const t=$(id); t.classList.add('active');
+  t.style.display = t.classList.contains('fpage') ? 'flex' : 'block';
 }
 
-// ── AUTH ──
 async function signIn(){
-  const {error} = await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo: location.origin+location.pathname}
-  });
+  const {error} = await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}});
   if(error) toast('Login failed: '+error.message,'err');
 }
-async function signOut(){
-  await sb.auth.signOut();
-  currentUser=null; chars=[];
-  show('p-land');
-}
+async function signOut(){ await sb.auth.signOut(); currentUser=null; chars=[]; show('p-land'); }
 
-// ── WORKER URL ──
-function getWorkerUrl(){ return localStorage.getItem(LS_WORKER)||''; }
-function saveWorkerUrl(){
-  const val=$('worker-url').value.trim().replace(/\/$/,'');
-  localStorage.setItem(LS_WORKER, val);
-}
-function slotLink(charSlug, si){
-  const w = getWorkerUrl();
-  if(w) return w+'/img/'+currentUser.id+'/'+charSlug+'/'+si;
-  return '(set your worker URL above)';
-}
+// Link includes user ID so two users can have same character name without collision
+function slotLink(charSlug, si){ return WORKER_URL+'/img/'+currentUser.id+'/'+charSlug+'/'+si; }
 
-// ── LOAD CHARS ──
 async function loadChars(){
   const {data,error} = await sb.from('characters').select('*').order('created_at',{ascending:true});
   if(error){ toast('Failed to load characters','err'); return []; }
   return data||[];
 }
 async function loadSlots(charId){
-  const {data,error} = await sb.from('slots').select('*').eq('character_id',charId);
-  if(error) return [];
+  const {data} = await sb.from('slots').select('*').eq('character_id',charId);
   return data||[];
 }
 
-// ── ADD CHAR ──
 async function addChar(){
-  const inp=$('new-name'), name=inp.value.trim(); if(!name)return;
+  const inp=$('new-name'), name=inp.value.trim(); if(!name) return;
   const slug=slugify(name);
   if(chars.find(c=>c.slug===slug)){ toast('Name already exists','err'); return; }
   const {data,error} = await sb.from('characters').insert({user_id:currentUser.id,name,slug}).select().single();
   if(error){ toast('Failed to add character','err'); return; }
-  // create empty slots
-  const slotRows = Array.from({length:SLOTS},(_,i)=>({character_id:data.id,slot_index:i,image_url:null}));
-  await sb.from('slots').insert(slotRows);
-  inp.value='';
-  chars = await loadChars();
-  renderList();
-  toast(name+' added!','ok');
+  await sb.from('slots').insert(Array.from({length:SLOTS},(_,i)=>({character_id:data.id,slot_index:i,image_url:null})));
+  inp.value=''; chars=await loadChars(); renderList(); toast(name+' added!','ok');
 }
 
-// ── DELETE CHAR ──
 async function delChar(e, charId, name){
   e.stopPropagation();
-  if(!confirm('Delete "'+name+'" and all its slots?'))return;
+  if(!confirm('Delete "'+name+'" and all its slots?')) return;
   await sb.from('characters').delete().eq('id',charId);
-  chars = await loadChars();
-  renderList();
-  toast('Deleted','ok');
+  chars=await loadChars(); renderList(); toast('Deleted','ok');
 }
 
-// ── RENDER LIST ──
-async function renderListFull(){
-  chars = await loadChars();
-  renderList();
-}
 function renderList(){
   $('char-count').textContent = chars.length ? '('+chars.length+')' : '';
   const g=$('chars-grid');
-  if(!chars.length){
-    g.innerHTML='<div class="empty-state"><div class="empty-ico">◈</div><p>No characters yet.<br>Type a name above and click Add.</p></div>';
-    return;
-  }
+  if(!chars.length){ g.innerHTML='<div class="empty-state"><div class="empty-ico">◈</div><p>No characters yet.<br>Type a name above and click Add.</p></div>'; return; }
   g.innerHTML=chars.map(c=>{
     const thumbs=Array.from({length:6},(_,si)=>{
       const s=c._slots&&c._slots[si];
@@ -335,183 +241,100 @@ function renderList(){
     const filled=c._slots?c._slots.filter(s=>s&&s.image_url).length:0;
     return `<div class="ccard">
       <div class="cthumb" onclick="openChar('${c.id}')">${thumbs}</div>
-      <div class="cbody" onclick="openChar('${c.id}')">
-        <div class="cname">${esc(c.name)}</div>
-        <div class="cmeta">${filled}/${SLOTS} filled · /${esc(c.slug)}</div>
-      </div>
-      <div class="cactions">
-        <button class="btn btn-sm btn-acc" style="flex:1" onclick="openChar('${c.id}')">Manage slots →</button>
-        <button class="btn btn-sm btn-red btn-ico" onclick="delChar(event,'${c.id}','${esc(c.name)}')">✕</button>
-      </div>
+      <div class="cbody" onclick="openChar('${c.id}')"><div class="cname">${esc(c.name)}</div><div class="cmeta">${filled}/${SLOTS} filled</div></div>
+      <div class="cactions"><button class="btn btn-sm btn-acc" style="flex:1" onclick="openChar('${c.id}')">Manage slots →</button><button class="btn btn-sm btn-red btn-ico" onclick="delChar(event,'${c.id}','${esc(c.name)}')">✕</button></div>
     </div>`;
   }).join('');
 }
 
-// ── OPEN CHAR ──
 async function openChar(charId){
-  const c = chars.find(x=>x.id===charId);
-  if(!c) return;
-  activeChar = c;
-  // load slots fresh
-  const slots = await loadSlots(charId);
-  activeChar._slots = Array.from({length:SLOTS},(_,i)=>slots.find(s=>s.slot_index===i)||{slot_index:i,image_url:null});
-  $('v-list').style.display='none';
-  $('v-detail').style.display='';
-  $('back-btn').classList.add('show');
-  $('d-name').textContent=c.name;
+  const c=chars.find(x=>x.id===charId); if(!c) return;
+  activeChar=c;
+  const slots=await loadSlots(charId);
+  activeChar._slots=Array.from({length:SLOTS},(_,i)=>slots.find(s=>s.slot_index===i)||{slot_index:i,image_url:null});
+  $('v-list').style.display='none'; $('v-detail').style.display='';
+  $('back-btn').classList.add('show'); $('d-name').textContent=c.name;
   renderSlots();
 }
 
-function goList(){
-  activeChar=null;
-  $('v-list').style.display='';
-  $('v-detail').style.display='none';
-  $('back-btn').classList.remove('show');
-  renderListFull();
-}
+function goList(){ activeChar=null; $('v-list').style.display=''; $('v-detail').style.display='none'; $('back-btn').classList.remove('show'); renderListFull(); }
 
-// ── RENDER SLOTS ──
 function renderSlots(){
-  const c=activeChar;
-  $('slots-grid').innerHTML=c._slots.map((slot,si)=>{
-    const link=slotLink(c.slug,si);
-    const imgHtml=slot&&slot.image_url
-      ?'<img src="'+esc(slot.image_url)+'" onerror="this.style.opacity=0.2"/>'
-      :'<div class="sprv-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>empty</span></div>';
+  $('slots-grid').innerHTML=activeChar._slots.map((slot,si)=>{
+    const link=slotLink(activeChar.slug,si);
+    const imgHtml=slot&&slot.image_url?'<img src="'+esc(slot.image_url)+'" onerror="this.style.opacity=0.2"/>':'<div class="sprv-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>empty</span></div>';
     return `<div class="scard">
       <div class="sprv" id="sp${si}">${imgHtml}</div>
       <div class="sbody">
-        <div class="srow">
-          <span class="slabel">Slot ${si+1}</span>
-          ${slot&&slot.image_url?'<button class="btn btn-xs btn-red" onclick="clearSlot('+si+')">Clear</button>':''}
-        </div>
-        <div class="lbox">
-          <span class="lbox-url" title="${esc(link)}">${esc(link)}</span>
-          <button class="cpybtn" id="cp${si}" onclick="copyLink(${si})">Copy</button>
-        </div>
-        <label class="uplabel">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-          Upload image / GIF
-          <input type="file" accept="image/*,image/gif" onchange="doUpload(event,${si})"/>
-        </label>
-        <div class="paste-row">
-          <input class="inp" id="pu${si}" placeholder="…or paste image URL" onkeydown="if(event.key==='Enter')setUrl(${si})"/>
-          <button class="btn" onclick="setUrl(${si})">Set</button>
-        </div>
+        <div class="srow"><span class="slabel">Slot ${si+1}</span>${slot&&slot.image_url?'<button class="btn btn-xs btn-red" onclick="clearSlot('+si+')">Clear</button>':''}</div>
+        <div class="lbox"><span class="lbox-url" title="${esc(link)}">${esc(link)}</span><button class="cpybtn" id="cp${si}" onclick="copyLink(${si})">Copy</button></div>
+        <label class="uplabel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>Upload image / GIF<input type="file" accept="image/*,image/gif" onchange="doUpload(event,${si})"/></label>
+        <div class="paste-row"><input class="inp" id="pu${si}" placeholder="…or paste image URL" onkeydown="if(event.key==='Enter')setUrl(${si})"/><button class="btn" onclick="setUrl(${si})">Set</button></div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── CLEAR SLOT ──
 async function clearSlot(si){
-  const slot=activeChar._slots[si];
-  if(!slot) return;
-  await sb.from('slots').update({image_url:null,updated_at:new Date().toISOString()}).eq('id',slot.id);
-  activeChar._slots[si].image_url=null;
-  renderSlots();
-  toast('Slot '+(si+1)+' cleared','ok');
+  await sb.from('slots').update({image_url:null,updated_at:new Date().toISOString()}).eq('id',activeChar._slots[si].id);
+  activeChar._slots[si].image_url=null; renderSlots(); toast('Slot '+(si+1)+' cleared','ok');
 }
-
-// ── SET URL ──
 async function setUrl(si){
-  const url=$('pu'+si).value.trim();
-  if(!url){ toast('Paste a URL first','err'); return; }
-  await saveSlot(si,url);
-  toast('Slot '+(si+1)+' updated!','ok');
+  const url=$('pu'+si).value.trim(); if(!url){ toast('Paste a URL first','err'); return; }
+  await saveSlot(si,url); toast('Slot '+(si+1)+' updated!','ok');
 }
-
-// ── UPLOAD ──
 async function doUpload(e,si){
   const file=e.target.files[0]; if(!file) return;
   $('sp'+si).innerHTML='<div class="sprv-loading"><div class="spin"></div><span>Uploading…</span></div>';
   try{
-    const fd=new FormData();
-    fd.append('file',file);
-    fd.append('upload_preset',CLOUDINARY_PRESET);
+    const fd=new FormData(); fd.append('file',file); fd.append('upload_preset',CLOUDINARY_PRESET);
     const res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUDINARY_CLOUD+'/upload',{method:'POST',body:fd});
     const json=await res.json();
     if(json.secure_url){ await saveSlot(si,json.secure_url); toast('Uploaded! Slot '+(si+1)+' updated','ok'); }
     else throw new Error(json.error?.message||'Upload failed');
   } catch(err){ renderSlots(); toast('Upload failed: '+err.message,'err'); }
 }
-
-// ── SAVE SLOT ──
-async function saveSlot(si, url){
+async function saveSlot(si,url){
   const slot=activeChar._slots[si];
-  if(slot&&slot.id){
-    await sb.from('slots').update({image_url:url,updated_at:new Date().toISOString()}).eq('id',slot.id);
-    activeChar._slots[si].image_url=url;
-  } else {
-    const {data} = await sb.from('slots').insert({character_id:activeChar.id,slot_index:si,image_url:url}).select().single();
-    activeChar._slots[si]=data;
-  }
+  if(slot&&slot.id){ await sb.from('slots').update({image_url:url,updated_at:new Date().toISOString()}).eq('id',slot.id); activeChar._slots[si].image_url=url; }
+  else{ const {data}=await sb.from('slots').insert({character_id:activeChar.id,slot_index:si,image_url:url}).select().single(); activeChar._slots[si]=data; }
   renderSlots();
 }
-
-// ── COPY LINK ──
 function copyLink(si){
-  const url=slotLink(activeChar.slug,si);
-  if(url.includes('set your worker')) { toast('Set your Worker URL first!','warn'); return; }
-  navigator.clipboard.writeText(url)
+  navigator.clipboard.writeText(slotLink(activeChar.slug,si))
     .then(()=>{ const b=$('cp'+si); b.textContent='Copied!'; b.classList.add('ok'); setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('ok'); },2000); })
-    .catch(()=>prompt('Copy this link:',url));
+    .catch(()=>prompt('Copy this link:',slotLink(activeChar.slug,si)));
 }
 
-// ── TOAST ──
 let _tt;
 function toast(msg,type='ok'){ const el=$('toast'); el.textContent=msg; el.className='toast '+type+' show'; clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2800); }
 
-// ── INIT ──
+async function loadAllSlots(){
+  for(const c of chars){ if(!c._slots){ const slots=await loadSlots(c.id); c._slots=Array.from({length:SLOTS},(_,i)=>slots.find(s=>s.slot_index===i)||{slot_index:i,image_url:null}); } }
+  renderList();
+}
+async function renderListFull(){ chars=await loadChars(); renderList(); loadAllSlots(); }
+
 async function init(){
   show('p-loading');
-  const {data:{session}} = await sb.auth.getSession();
+  const {data:{session}}=await sb.auth.getSession();
   if(session){
     currentUser=session.user;
     $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
     const av=currentUser.user_metadata?.avatar_url;
     if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
-    const w=getWorkerUrl();
-    show('p-app');
-    if(w) $('worker-url').value=w;
-    await renderListFull();
-  } else {
-    show('p-land');
-  }
-
+    show('p-app'); await renderListFull();
+  } else { show('p-land'); }
   sb.auth.onAuthStateChange(async(event,session)=>{
     if(event==='SIGNED_IN'&&session){
       currentUser=session.user;
       $('tb-name').textContent=currentUser.user_metadata?.full_name||currentUser.email;
       const av=currentUser.user_metadata?.avatar_url;
       if(av) $('tb-avatar').src=av; else $('tb-avatar').style.display='none';
-      const w=getWorkerUrl();
-      show('p-app');
-      if(w) $('worker-url').value=w;
-      await renderListFull();
-    } else if(event==='SIGNED_OUT'){
-      show('p-land');
-    }
+      show('p-app'); await renderListFull();
+    } else if(event==='SIGNED_OUT'){ show('p-land'); }
   });
 }
-
-// load slots for list thumbnails in background
-async function loadAllSlots(){
-  for(const c of chars){
-    if(!c._slots){
-      const slots=await loadSlots(c.id);
-      c._slots=Array.from({length:SLOTS},(_,i)=>slots.find(s=>s.slot_index===i)||{slot_index:i,image_url:null});
-    }
-  }
-  renderList();
-}
-
-async function renderListFull(){
-  chars=await loadChars();
-  renderList();
-  loadAllSlots();
-}
-
 init();
 </script>
 </body>
